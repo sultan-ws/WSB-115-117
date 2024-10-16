@@ -57,7 +57,7 @@ const readData = async () => {
 };
 
 
-// readData();
+readData();
 
 const updateData = async ()=>{
     const db = await connect();
@@ -89,4 +89,4 @@ const deleteData = async ()=>{
     console.log(response);
 };
 
-deleteData();
+// deleteData();
