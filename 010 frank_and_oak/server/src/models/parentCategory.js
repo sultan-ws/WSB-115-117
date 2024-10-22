@@ -30,6 +30,6 @@ parentCategorySchema.pre('save', function(){
     this.created_at = new Date();
 });
 
-const PrentCategory = mongoose.model('parent_categories', parentCategorySchema);
+const ParentCategory = mongoose.model('parent_categories', parentCategorySchema);
 
-module.exports = PrentCategory;
+module.exports = ParentCategory;
