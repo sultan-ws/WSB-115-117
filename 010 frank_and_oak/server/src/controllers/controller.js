@@ -4,11 +4,21 @@
 const {
     createParentCategory,
     readParentCategory,
-    updateParentCategoryStatus
+    updateParentCategoryStatus,
+    deleteParentCategory,
+    multiDeleteParentCategory
 } = require("./admin-panel/parentCategoryControllers");
+
+//color controllers
+const { 
+    createColor
+ } = require("./admin-panel/colorControllers");
 
 module.exports = {
     createParentCategory,
     readParentCategory,
-    updateParentCategoryStatus
+    updateParentCategoryStatus,
+    createColor,
+    deleteParentCategory,
+    multiDeleteParentCategory
 }
