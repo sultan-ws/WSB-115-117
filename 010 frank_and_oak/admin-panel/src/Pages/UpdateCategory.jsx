@@ -1,8 +1,59 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const UpdateCategory = () => {
+  const {_id} = useParams();
+  const nav = useNavigate();
+
+  const [category, setCategory] = useState({});
+
+  useEffect(()=>{
+    axios.get(`${process.env.REACT_APP_API_HOST}/api/admin-panel/parent-category/read-category/${_id}`)
+    .then((response) => {
+      console.log(response.data);
+      setCategory(response.data.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+  },[_id]);
+
+  const handleUpdateCategory = ()=>{
+    axios.put(`${process.env.REACT_APP_API_HOST}/api/admin-panel/parent-category/update-category/${_id}`,
+      {
+        name:category.name,
+        description:category.description,
+      }
+    )
+    .then((response) => {
+      console.log(response.data);
+      
+      let timerInterval;
+      Swal.fire({
+        title: "Category added!",
+        html: "You're redirecting to view page in <b></b> milliseconds.",
+        timer: 800,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+          const timer = Swal.getPopup().querySelector("b");
+          timerInterval = setInterval(() => {
+            timer.textContent = `${Swal.getTimerLeft()}`;
+          }, 100);
+        },
+        willClose: () => {
+          clearInterval(timerInterval);
+        }
+      }).then((result) => {
+        nav('/dashboard/category/view-category');
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+  }
  
   return (
     <div className="w-[90%] mx-auto my-[150px] bg-white border rounded-[10px]">
@@ -18,10 +69,10 @@ const UpdateCategory = () => {
             <input
               type="text"
               name="name"
-              
+              value={category.name}
               id="categoryName"
               placeholder="Category Name"
-              
+              onChange={(e)=>{setCategory({...category, name: e.target.value})}}
               className="input border p-1 w-full rounded-[5px] my-[10px]"
             />
           </div>
@@ -44,7 +95,8 @@ const UpdateCategory = () => {
               type="file"
               name="description"
               id="categoryDesc"
-             
+              value={category.description}
+              onChange={(e)=>{setCategory({...category, description: e.target.value})}}
               className="input border w-full rounded-[5px] my-[10px]"
             />
           </div>
@@ -74,7 +126,7 @@ const UpdateCategory = () => {
             <span>Hide</span>
           </div> */}
           <div className="w-full my-[20px] ">
-            <button className="bg-[#5351c9] rounded-md text-white w-[100px] h-[35px]">
+            <button type="button" onClick={handleUpdateCategory} className="bg-[#5351c9] rounded-md text-white px-3 h-[35px]">
               Update Category
             </button>
           </div>

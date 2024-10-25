@@ -6,6 +6,10 @@ import { Link } from "react-router-dom";
 import 'react-tooltip/dist/react-tooltip.css';
 import { Tooltip as ReactTooltip, Tooltip } from 'react-tooltip';
 import Swal from "sweetalert2";
+import { ImBin } from "react-icons/im";
+import 'react-responsive-modal/styles.css';
+import { Modal } from 'react-responsive-modal';
+import { FaTrashRestore } from "react-icons/fa";
 
 const ViewCategory = () => {
   let [show1, setShow1] = useState(false);
@@ -14,8 +18,10 @@ const ViewCategory = () => {
   let [show4, setShow4] = useState(false);
 
   const [categories, setCategories] = useState([]);
+  const [deletedCategories, setDeletedCategories] = useState([]);
   const [checked, setChecked] = useState([]);
   const [ifAllChecked, setIfAllChecked] = useState(false);
+  const [open, setOpen] = useState(false);
 
   const fetchCategory = () => {
     axios.get(`${process.env.REACT_APP_API_HOST}/api/admin-panel/parent-category/read-category`)
@@ -28,7 +34,18 @@ const ViewCategory = () => {
       })
   };
 
-  useEffect(() => { fetchCategory() }, []);
+  const fetchDeletedCategory = () => {
+    axios.get(`${process.env.REACT_APP_API_HOST}/api/admin-panel/parent-category/deleted-categories`)
+      .then((response) => {
+        console.log(response.data);
+        setDeletedCategories(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  };
+
+  useEffect(() => { fetchCategory(); fetchDeletedCategory(); }, []);
 
   const handleUpdateStatus = (e) => {
 
@@ -156,9 +173,88 @@ const ViewCategory = () => {
   return (
     <div className="w-[90%] mx-auto my-[150px] bg-white rounded-[10px] border">
       <Tooltip id="my-tooltip" />
-      <span className="block h-[40px] bg-[#f8f8f9] text-[20px] text-[#303640] p-[8px_16px] border-b rounded-[10px_10px_0_0]">
-        View Category
-      </span>
+      <div className="flex justify-between h-[40px] bg-[#f8f8f9] text-[20px] text-[#303640] p-[8px_16px] border-b rounded-[10px_10px_0_0]">
+      <h4>View Category</h4>
+        <span>
+          <ImBin className="cursor-pointer" onClick={()=>{setOpen(true)}} />
+        </span>
+      </div>
+      <Modal open={open} onClose={()=>{setOpen(false)}} center>
+      <table className="w-full">
+          <thead>
+            <tr className="text-left border-b">
+              <th>
+                <button
+                  className="bg-red-400 rounded-sm px-2 py-1"
+                  onClick={hadnleMultiDelete}
+                >Delete</button>
+                <input
+                  type="checkbox"
+                  name="deleteAll"
+                  id="deleteAllCat"
+                  onClick={handleAllCheck}
+                  className="accent-[#5351c9]"
+                  checked={ifAllChecked}
+                />
+              </th>
+              <th>Sno</th>
+              <th>Category Name</th>
+              <th>Description</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              deletedCategories.map((category, index) => (
+                <tr className="border-b" key={index}>
+
+                  <td>
+                    <input
+                      type="checkbox"
+                      name="delete"
+                      id="delete1"
+                      value={category._id}
+                      className="accent-[#5351c9] cursor-pointer"
+                      onClick={handleCheck}
+                      checked={checked.includes(category._id)}
+                    />
+                  </td>
+                  <td>{index + 1}</td>
+                  <td>{category.name}</td>
+                  <td className="w-[200px] flex-wrap p-1">
+                    {
+                      category.description
+                    }
+                    <span
+                      onClick={() => setShow1(!show1)}
+                      className={
+                        show1 === true ? "hidden" : "font-bold cursor-pointer"
+                      }
+                    >
+                      ...Read
+                    </span>
+                    {show1 === false ? (
+                      " "
+                    ) : (
+                      <span>
+                        Deserunt nam est delectus itaque sint harum architecto.
+                      </span>
+                    )}
+                  </td>
+                  <td>
+                    <MdDelete onClick={() => { handleDeleteCategory(category._id) }} className="my-[5px] text-red-500 cursor-pointer inline" />{" "}
+                    |{" "}
+                    <FaTrashRestore />
+                  </td>
+                </tr>
+              ))
+            }
+
+
+
+          </tbody>
+        </table>
+      </Modal>
       <div className="w-[90%] mx-auto my-[20px]">
         <table className="w-full">
           <thead>
@@ -225,7 +321,7 @@ const ViewCategory = () => {
                   <td>
                     <MdDelete onClick={() => { handleDeleteCategory(category._id) }} className="my-[5px] text-red-500 cursor-pointer inline" />{" "}
                     |{" "}
-                    <Link to={`/dashboard/category/update-category/${'parentCategory._id'}`}>
+                    <Link to={`/dashboard/category/update-category/${category._id}`}>
                       <CiEdit className="my-[5px] text-yellow-500 cursor-pointer inline" />
                     </Link>
                   </td>
