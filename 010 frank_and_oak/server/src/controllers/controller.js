@@ -9,13 +9,21 @@ const {
     multiDeleteParentCategory,
     parentCategoryById,
     updateParentCategory,
-    deletedParentCategory
+    deletedParentCategory,
+    restoreParentCategory,
+    activeParentCategories
 } = require("./admin-panel/parentCategoryControllers");
 
 //color controllers
 const { 
     createColor
  } = require("./admin-panel/colorControllers");
+ 
+  // product category controllers 
+const { createProductCategory } = require("./admin-panel/productCategoryController");
+
+
+
 
 module.exports = {
     createParentCategory,
@@ -26,5 +34,8 @@ module.exports = {
     multiDeleteParentCategory,
     parentCategoryById,
     updateParentCategory,
-    deletedParentCategory
+    deletedParentCategory,
+    restoreParentCategory,
+    activeParentCategories,
+    createProductCategory
 }

@@ -122,6 +122,36 @@ const deletedParentCategory = async(req, res) =>{
         console.log(error);
         res.status(500).json({message: 'internal server error'});
     }
+};
+
+const restoreParentCategory = async (req, res) => {
+    try{
+        const response = await ParentCategory.updateOne(
+            req.params,
+            {
+                $set:{
+                    deleted_at: null
+                }
+            }
+        );
+
+        res.status(200).json({message: 'success', data: response});
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message: 'internal server error'});
+    }
+};
+
+const activeParentCategories = async (req, res) => {
+    try{
+        const response = await ParentCategory.find({deleted_at: null, status: true});
+        res.status(200).json({message: 'success', data: response});
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message: 'internal server error'});
+    }
 }
 
 module.exports = {
@@ -132,5 +162,7 @@ module.exports = {
     multiDeleteParentCategory,
     parentCategoryById,
     updateParentCategory,
-    deletedParentCategory
+    deletedParentCategory,
+    restoreParentCategory,
+    activeParentCategories
 }

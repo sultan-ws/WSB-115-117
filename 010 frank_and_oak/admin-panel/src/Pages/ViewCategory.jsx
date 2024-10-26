@@ -99,6 +99,7 @@ const ViewCategory = () => {
               text: "Your category has been deleted.",
               icon: "success"
             });
+            fetchDeletedCategory();
           })
           .catch((error) => {
             console.log(error);
@@ -170,6 +171,17 @@ const ViewCategory = () => {
     });
   };
 
+  const handleRestoreCategory = (id)=>{
+     axios.put(`${process.env.REACT_APP_API_HOST}/api/admin-panel/parent-category/restore-category/${id}`)
+     .then(()=>{
+      fetchCategory();
+      fetchDeletedCategory();
+     })
+     .catch((error)=>{
+      console.log(error);
+      });
+  }
+
   return (
     <div className="w-[90%] mx-auto my-[150px] bg-white rounded-[10px] border">
       <Tooltip id="my-tooltip" />
@@ -180,80 +192,81 @@ const ViewCategory = () => {
         </span>
       </div>
       <Modal open={open} onClose={()=>{setOpen(false)}} center>
-      <table className="w-full">
-          <thead>
-            <tr className="text-left border-b">
-              <th>
-                <button
-                  className="bg-red-400 rounded-sm px-2 py-1"
-                  onClick={hadnleMultiDelete}
-                >Delete</button>
-                <input
-                  type="checkbox"
-                  name="deleteAll"
-                  id="deleteAllCat"
-                  onClick={handleAllCheck}
-                  className="accent-[#5351c9]"
-                  checked={ifAllChecked}
-                />
-              </th>
-              <th>Sno</th>
-              <th>Category Name</th>
-              <th>Description</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              deletedCategories.map((category, index) => (
-                <tr className="border-b" key={index}>
 
-                  <td>
-                    <input
-                      type="checkbox"
-                      name="delete"
-                      id="delete1"
-                      value={category._id}
-                      className="accent-[#5351c9] cursor-pointer"
-                      onClick={handleCheck}
-                      checked={checked.includes(category._id)}
-                    />
-                  </td>
-                  <td>{index + 1}</td>
-                  <td>{category.name}</td>
-                  <td className="w-[200px] flex-wrap p-1">
-                    {
-                      category.description
-                    }
-                    <span
-                      onClick={() => setShow1(!show1)}
-                      className={
-                        show1 === true ? "hidden" : "font-bold cursor-pointer"
+        {
+          (deletedCategories.length === 0) ? (<h1>No data in bin</h1>) : (
+            <table className="w-full">
+            <thead>
+              <tr className="text-left border-b">
+                <th>
+                  <button
+                    className="bg-red-400 rounded-sm px-2 py-1"
+                  >Delete</button>
+                  <input
+                    type="checkbox"
+                    name="deleteAll"
+                    id="deleteAllCat"
+                    className="accent-[#5351c9]"
+                  />
+                </th>
+                <th>Sno</th>
+                <th>Category Name</th>
+                <th>Description</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                deletedCategories.map((category, index) => (
+                  <tr className="border-b" key={index}>
+  
+                    <td>
+                      <input
+                        type="checkbox"
+                        name="delete"
+                        id="delete1"
+                        value={category._id}
+                        className="accent-[#5351c9] cursor-pointer"
+                      />
+                    </td>
+                    <td>{index + 1}</td>
+                    <td>{category.name}</td>
+                    <td className="w-[200px] flex-wrap p-1">
+                      {
+                        category.description
                       }
-                    >
-                      ...Read
-                    </span>
-                    {show1 === false ? (
-                      " "
-                    ) : (
-                      <span>
-                        Deserunt nam est delectus itaque sint harum architecto.
+                      <span
+                        onClick={() => setShow1(!show1)}
+                        className={
+                          show1 === true ? "hidden" : "font-bold cursor-pointer"
+                        }
+                      >
+                        ...Read
                       </span>
-                    )}
-                  </td>
-                  <td>
-                    <MdDelete onClick={() => { handleDeleteCategory(category._id) }} className="my-[5px] text-red-500 cursor-pointer inline" />{" "}
-                    |{" "}
-                    <FaTrashRestore />
-                  </td>
-                </tr>
-              ))
-            }
-
-
-
-          </tbody>
-        </table>
+                      {show1 === false ? (
+                        " "
+                      ) : (
+                        <span>
+                          Deserunt nam est delectus itaque sint harum architecto.
+                        </span>
+                      )}
+                    </td>
+                    <td className="flex items-center">
+                      <MdDelete className="my-[5px] text-red-500 cursor-pointer inline" />{" "}
+                      |{" "}
+                      <FaTrashRestore className="cursor-pointer" onClick={()=>{handleRestoreCategory(category._id)}} />
+                    </td>
+                  </tr>
+                ))
+              }
+  
+  
+  
+            </tbody>
+          </table>
+          )
+        }
+    
       </Modal>
       <div className="w-[90%] mx-auto my-[20px]">
         <table className="w-full">
