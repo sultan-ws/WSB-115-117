@@ -1,12 +1,27 @@
 import axios from "axios";
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { json, Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 
 function App() {
   const nav = useNavigate();
 
  
+  const handleLogin = (e)=>{
+    e.preventDefault();
+  
+    axios.post(`${process.env.REACT_APP_API_HOST}/api/admin-panel/admin/login`, e.target)
+    .then((response) => {
+      console.log(response.data);
+
+      Cookies.set('wsb_117_115_admin', JSON.stringify(response.data), {expires: 4});
+
+      nav('/dashboard');
+    })
+    .catch((error) => {
+      console.log(error);
+    })
+  };
 
 
   return (
@@ -17,7 +32,7 @@ function App() {
       <h3 className="text-[#303640c2] text-[14px] p-[0_10px] mb-[30px]">
         Sign-in to your account
       </h3>
-      <form>
+      <form method="post" onSubmit={handleLogin}>
         <div className="w-full  grid grid-cols-[20%_auto] my-[10px]">
           <label htmlFor="name" className="py-[8px] px-[10px] text-[#303640]">
             User Name
@@ -46,16 +61,13 @@ function App() {
           />
         </div>
         <div className="w-full my-[50px] flex justify-between items-center">
-        <Link to='/dashboard'>
             <button
-              type="button"
+              type="submit"
               className="w-[130px] bg-purple-600 text-white h-[40px] rounded-[5px] text-[18px] font-[400]"
             >
           
               Login
             </button>
-
-            </Link>
           <Link to="/reset-password">
             <span className="text-[#5351c9] mr-[50px]">Forgot password?</span>
           </Link>

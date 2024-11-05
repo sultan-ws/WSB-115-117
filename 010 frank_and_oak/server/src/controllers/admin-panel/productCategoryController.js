@@ -20,6 +20,19 @@ const createProductCategory = async (req, res) => {
     }
 };
 
+const readProductCategory = async (req, res) => {
+    try{
+        const data = await ProductCatgory.find().populate('parent_category', 'name description');
+
+        res.status(200).json({message: 'success', data});
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message: 'error'});
+    }
+}
+
 module.exports = {
-    createProductCategory
+    createProductCategory,
+    readProductCategory
 }
