@@ -8,6 +8,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use('/admin-panel-files', express.static('./src/uploads/admin'));
 
 app.use('/api', allRoutes);
 

@@ -6,6 +6,14 @@ import Cookies from "js-cookie";
 function App() {
   const nav = useNavigate();
 
+  const checkIfLoggedIn = ()=>{
+    const cookieData = Cookies.get('wsb_117_115_admin');
+
+    if(cookieData) return nav('/dashboard');
+  };
+
+  useEffect(()=>{checkIfLoggedIn()},[]);
+
  
   const handleLogin = (e)=>{
     e.preventDefault();

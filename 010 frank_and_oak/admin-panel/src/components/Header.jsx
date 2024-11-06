@@ -20,6 +20,14 @@ function Header() {
   let [width, setWidth] = useState(false);
   let [profileDropDown, setProfileDropDown] = useState(false);
 
+  const checkIfLoggedIn = ()=>{
+    const cookieData = Cookies.get('wsb_117_115_admin');
+
+    if(!cookieData) return nav('/');
+  };
+
+  useEffect(()=>{checkIfLoggedIn()},[]);
+
 
   return (
     <div

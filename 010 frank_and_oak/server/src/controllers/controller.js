@@ -28,7 +28,8 @@ const {
 // admin controllers
 const {
      registerAdmin,
-     adminLogin
+     adminLogin,
+     updateAdmin
     } = require("./admin-panel/adminControllers");
 
 
@@ -49,5 +50,6 @@ module.exports = {
     createProductCategory,
     readProductCategory,
     registerAdmin,
-    adminLogin
+    adminLogin,
+    updateAdmin
 }

@@ -8,12 +8,75 @@ import { FaEyeSlash } from "react-icons/fa";
 import Cookies from "js-cookie";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 
 function Profile() {
-
+  const nav = useNavigate();
   const [show, setShow] = useState(false);
-  
+  const [adminData, setAmdinData] = useState({});
+  const [filepath, setFilepath] = useState('');
+  const [previews, setPreviwes] = useState({});
+
+  const fetchAdminData = () => {
+   
+
+    const cookieData = JSON.parse(Cookies.get('wsb_117_115_admin'));
+    console.log(cookieData);
+    setAmdinData(cookieData.data);
+    setFilepath(cookieData.filepath);
+
+  };
+
+  useEffect(() => { fetchAdminData(); }, []);
+
+
+  const handlePreview = (e) => {
+    const { name, files } = e.target;
+
+    const url = URL.createObjectURL(files[0]);
+    setPreviwes({ ...previews, [name]: url });
+  };
+
+  const handleUpdateAdmin = (e) => {
+    e.preventDefault();
+
+    axios.put(`${process.env.REACT_APP_API_HOST}/api/admin-panel/admin/update-admin/${adminData._id}`, e.target)
+      .then((response) => {
+        console.log(response.data);
+
+        let timerInterval;
+        Swal.fire({
+          title: "Admin updated!",
+          html: "Please log in again <b></b> milliseconds.",
+          timer: 500,
+          timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading();
+            const timer = Swal.getPopup().querySelector("b");
+            timerInterval = setInterval(() => {
+              timer.textContent = `${Swal.getTimerLeft()}`;
+            }, 100);
+          },
+          willClose: () => {
+            clearInterval(timerInterval);
+          }
+        }).then((result) => {
+          /* Read more about handling dismissals below */
+          if (result.dismiss === Swal.DismissReason.timer) {
+            Cookies.remove('wsb_117_115_admin');
+            nav('/');
+          }
+        });
+
+        // Cookies.remove('wsb_117_115_admin', JSON.stringify(response.data), {expires: 4});
+
+        // nav('/dashboard');
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  };
 
   return (
     <div>
@@ -21,144 +84,157 @@ function Profile() {
         <span className="block text-[#303640] bg-[#f8f8f9] rounded-[10px_10px_0_0] h-[60px] p-[15px_15px] box-border font-bold text-[25px] border-b">
           Profile
         </span>
-        <div className="w-full grid grid-cols-[2fr_2fr]">
+        <div className="w-full">
           <div className="p-[10px]">
-            <form >
-              <div className="w-full ">
-                <span className="block m-[15px_0]">Name</span>
-                <input
-                  type="text"
-                 
-                  name="name"
-                 
-                  className="w-full border h-[35px] rounded-[5px] p-2 input"
-                />
-              </div>
-              <div className="w-full ">
-                <span className="block m-[15px_0]">Social Link</span>
-                <div className="w-full grid grid-cols-[10%_auto] mb-[10px]">
-                  <span className="w-full h-full text-[20px] p-[8px]">
-                    <RiFacebookFill />
-                  </span>
+            <form method="post" onSubmit={handleUpdateAdmin}>
+              <div className="grid grid-cols-[1fr_1fr] gap-2">
+                <div>
+                  <div className="w-full ">
+                    <span className="block m-[15px_0]">Name</span>
+                    <input
+                      type="text"
+                      value={adminData.name}
+                      name="name"
+                      onChange={(e) => { setAmdinData({ ...adminData, name: e.target.value }) }}
+                      className="w-full border h-[35px] rounded-[5px] p-2 input"
+                    />
+                  </div>
+                  <div className="w-full ">
+                    <span className="block m-[15px_0]">Social Link</span>
+                    <div className="w-full grid grid-cols-[10%_auto] mb-[10px]">
+                      <span className="w-full h-full text-[20px] p-[8px]">
+                        <RiFacebookFill />
+                      </span>
+                      <input
+                        type="text"
+                        value={adminData.facebook}
+                        name="facebook"
+                        onChange={(e) => { setAmdinData({ ...adminData, facebook: e.target.value }) }}
+                        className="w-full border h-[35px] rounded-[5px] p-2 input"
+                      />
+                    </div>
+                    <div className="w-full grid grid-cols-[10%_auto] mb-[10px]">
+                      <span className="w-full h-full text-[20px] p-[8px]">
+                        <CiInstagram />
+                      </span>
+                      <input
+                        type="text"
+                        value={adminData.instagram}
+                        name="instagram"
+                        onChange={(e) => { setAmdinData({ ...adminData, instagram: e.target.value }) }}
+                        className="w-full border h-[35px] rounded-[5px] p-2 input"
+                      />
+                    </div>
+                    <div className="w-full grid grid-cols-[10%_auto] mb-[10px]">
+                      <span className="w-full h-full text-[20px] p-[8px]">
+                        <FaYoutube />
+                      </span>
+                      <input
+                        type="text"
+                        onChange={(e) => { setAmdinData({ ...adminData, youtube: e.target.value }) }}
+                        name="youtube"
+                        value={adminData.youtube}
+                        className="w-full border h-[35px] rounded-[5px] p-2 input"
+                      />
+                    </div>
+                    <div className="w-full grid grid-cols-[10%_auto] mb-[10px]">
+                      <span className="w-full h-full text-[20px] p-[8px]">
+                        <FaXTwitter />
+                      </span>
+                      <input
+                        type="text"
+                        value={adminData.twitter}
+                        name="twitter"
+                        onChange={(e) => { setAmdinData({ ...adminData, twitter: e.target.value }) }}
+                        className="w-full border h-[35px] rounded-[5px] p-2 input"
+                      />
+                    </div>
+                  </div>
+                  <div className="w-full my-[20px]">
+                    <span className="block m-[15px_0]">Logo</span>
+                    <div className="w-[50px] h-[50px] object-fill">
+                      <img src={previews.logo || filepath + adminData.logo} alt="Logo" className="w-full h-full" />
+                    </div>
+                    <input
+                      type="file"
+                      name="logo"
+                      className="input border w-full m-[10px_0] category"
+                      onChange={handlePreview}
+                    />
+                  </div>
+                  <div className="w-full my-[20px]">
+                    <span className="block m-[15px_0]">Fav Icon</span>
+                    <div className="w-[50px] h-[50px] object-fill">
+                      <img
+                        src={previews.favicon || filepath + adminData.favicon}
+                        alt="favicon"
+                        className="w-full h-full"
+                      />
+                    </div>
+                    <input
+                      type="file"
+                      name="favicon"
+                      className="input border w-full m-[10px_0] category"
+                      onChange={handlePreview}
+                    />
+                  </div>
+                  <div className="w-full my-[20px]">
+                    <span className="block m-[15px_0]">Footer Logo</span>
+                    <div className="w-[50px] h-[50px] object-fill">
+                      <img
+                        src={previews.footer_logo || filepath + adminData.footer_logo}
+                        alt="footer_logo"
+                        className="w-full h-full"
+                      />
+                    </div>
+                    <input
+                      type="file"
+                      name="footer_logo"
+                      className="input border w-full m-[10px_0] category"
+                      onChange={handlePreview}
+                    />
+                  </div>
+                  <div className="w-full my-[20px] relative ">
+                    <span className="block m-[15px_0]">Password</span>
+                    <input
+                      type={show === false ? "password" : "text"}
+                      value={adminData.password}
+                      name="password"
+                      onChange={(e) => { setAmdinData({ ...adminData, password: e.target.value }) }}
+                      className="w-full border h-[35px] rounded-[5px] p-2 input"
+                    />
+                    <span
+                      onClick={() => setShow(!show)}
+                      className="absolute right-[20px] bottom-[10px] cursor-pointer text-[#303640]"
+                    >
+                      {show === false ? <FaEye /> : <FaEyeSlash />}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col justify-center box-border items-center gap-[10px] h-[400px]">
+                  <div className="border border-slate-300 w-[200px] h-[200px] rounded-[50%] object-contain">
+                    <img
+                      src={previews.thumbnail || filepath + adminData.thumbnail}
+                      alt="profile img"
+                      className="w-full h-full rounded-[50%]"
+                    />
+                  </div>
+                  <span className="block text-center">Profile Image</span>
                   <input
-                    type="text"
-                    
-                  name="fb"
-                 
-                    className="w-full border h-[35px] rounded-[5px] p-2 input"
+                    type="file"
+
+                    name="thumbnail"
+                    onChange={handlePreview}
+                    className="w-full border  rounded-[5px] p-3 input"
                   />
                 </div>
-                <div className="w-full grid grid-cols-[10%_auto] mb-[10px]">
-                  <span className="w-full h-full text-[20px] p-[8px]">
-                    <CiInstagram />
-                  </span>
-                  <input
-                    type="text"
-                   
-                  name="instagram"
-                 
-                    className="w-full border h-[35px] rounded-[5px] p-2 input"
-                  />
-                </div>
-                <div className="w-full grid grid-cols-[10%_auto] mb-[10px]">
-                  <span className="w-full h-full text-[20px] p-[8px]">
-                    <FaYoutube />
-                  </span>
-                  <input
-                    type="text"
-                   
-                  name="youtube"
-                  
-                    className="w-full border h-[35px] rounded-[5px] p-2 input"
-                  />
-                </div>
-                <div className="w-full grid grid-cols-[10%_auto] mb-[10px]">
-                  <span className="w-full h-full text-[20px] p-[8px]">
-                    <FaXTwitter />
-                  </span>
-                  <input
-                    type="text"
-                 
-                  name="twitter"
-                  
-                    className="w-full border h-[35px] rounded-[5px] p-2 input"
-                  />
-                </div>
-              </div>
-              <div className="w-full my-[20px]">
-                <span className="block m-[15px_0]">Logo</span>
-                <div className="w-[50px] h-[50px] object-fill">
-                  <img src="" alt="Logo" className="w-full h-full" />
-                </div>
-                <input
-                  type="file"
-                  name="logo"
-                  className="input border w-full m-[10px_0] category"
-                 
-                />
-              </div>
-              <div className="w-full my-[20px]">
-                <span className="block m-[15px_0]">Fav Icon</span>
-                <div className="w-[50px] h-[50px] object-fill">
-                  <img
-                    src=""
-                    alt="Logo"
-                    className="w-full h-full"
-                  />
-                </div>
-                <input
-                  type="file"
-                  name="favicon"
-                  className="input border w-full m-[10px_0] category"
-                />
-              </div>
-              <div className="w-full my-[20px]">
-                <span className="block m-[15px_0]">Footer Logo</span>
-                <div className="w-[50px] h-[50px] object-fill">
-                  <img
-                   src=""
-                    alt="Logo"
-                    className="w-full h-full"
-                  />
-                </div>
-                <input
-                  type="file"
-                  name="footer_icon"
-                  className="input border w-full m-[10px_0] category"
-                 
-                />
-              </div>
-              <div className="w-full my-[20px] relative ">
-                <span className="block m-[15px_0]">Password</span>
-                <input
-                  type={show === false ? "password" : "text"}
-                  
-                  name="password"
-                  
-                  className="w-full border h-[35px] rounded-[5px] p-2 input"
-                />
-                <span
-                  onClick={() => setShow(!show)}
-                  className="absolute right-[20px] bottom-[10px] cursor-pointer text-[#303640]"
-                >
-                  {show === false ? <FaEye /> : <FaEyeSlash />}
-                </span>
               </div>
               <button type="submit" className="w-[150px] h-[40px] rounded-md text-white bg-[#5351c9] my-[30px]">
                 Update
               </button>
             </form>
           </div>
-          <div className="flex flex-col justify-center p-[10px] box-border items-center gap-[10px] h-[400px]">
-            <div className="border border-slate-300 w-[200px] h-[200px] rounded-[50%] object-contain">
-              <img
-                src="/profile.jpg"
-                alt="profile img"
-                className="w-full h-full rounded-[50%]"
-              />
-            </div>
-            <span className="block text-center">Profile Image</span>
-          </div>
+
         </div>
       </div>
       <div className="mb-[80px] w-[90%] mx-auto border rounded-[10px]">
@@ -171,7 +247,7 @@ function Profile() {
               <span className="block m-[15px_0]">Current Email</span>
               <input
                 type="email"
-                
+                name="email"
                 className="w-full border h-[35px] rounded-[5px] p-2 input"
               />
             </div>
@@ -181,28 +257,28 @@ function Profile() {
                 type="text"
                 placeholder="Enter OTP"
                 name='userotp'
-               
+
                 className="w-full border h-[35px] rounded-[5px] p-2 input"
               />
               <input
                 type="text"
                 placeholder="Enter new email"
                 name='newemail'
-                
+
                 className="w-full border h-[35px] rounded-[5px] p-2 input"
               />
             </div>
             <button
               type="button"
-              
+
               className={`w-[150px] h-[40px] rounded-md text-white  my-[30px]`}>
               {'otpBtnText'}
             </button>
 
             <button
-             
+
               type="button"
-             
+
               className={`w-[150px] block h-[40px] rounded-md text-white bg-[#5351c9]  my-[30px]`}>
               Update Email
             </button>
