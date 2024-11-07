@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, CSSProperties  } from "react";
 import { RiFacebookFill } from "react-icons/ri";
 import { CiInstagram } from "react-icons/ci";
 import { FaYoutube } from "react-icons/fa";
@@ -9,7 +9,19 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { ClipLoader } from "react-spinners";
 
+
+const override: CSSProperties = {
+  display: "block",
+  margin: "0 auto",
+  borderColor: "red",
+  position: "fixed",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  zIndex:"9999999"
+};
 
 function Profile() {
   const nav = useNavigate();
@@ -17,6 +29,10 @@ function Profile() {
   const [adminData, setAmdinData] = useState({});
   const [filepath, setFilepath] = useState('');
   const [previews, setPreviwes] = useState({});
+  const [ifOtp, setIfOtp] = useState(false);
+  const [otpText, setOtpText] = useState('Genrate OTP');
+  let [loading, setLoading] = useState(false);
+
 
   const fetchAdminData = () => {
    
@@ -68,18 +84,74 @@ function Profile() {
             nav('/');
           }
         });
-
-        // Cookies.remove('wsb_117_115_admin', JSON.stringify(response.data), {expires: 4});
-
-        // nav('/dashboard');
       })
       .catch((error) => {
         console.log(error);
       })
   };
 
+  const handleGenrateOtp = ()=>{
+    setLoading(true);
+
+    axios.post(`${process.env.REACT_APP_API_HOST}/api/admin-panel/admin/genrate-otp`, { email: adminData.email })
+    .then((response)=>{
+      setLoading(false);
+      console.log(response);
+      setIfOtp(true);
+
+      let counter = 120;
+
+      setOtpText('Regenrate OTP in 120s');
+
+      const otpInterval = setInterval(()=>{
+        counter--;
+        setOtpText(`Regenrate OTP in ${counter}s`);
+
+        if(counter < 1) {
+          clearInterval(otpInterval);
+          setOtpText('Genrate OTP');
+          setIfOtp(false);
+        }
+      }, 1000);
+
+    })
+    .catch((error)=>{
+      console.log(error)
+    })
+  }
+
+  const handleUpdateEmail = (e)=>{
+    e.preventDefault();
+
+    axios.put(`${process.env.REACT_APP_API_HOST}/api/admin-panel/admin/update-email`, {
+       email: adminData.email,
+       newEmail: e.target.newemail.value,
+       userOtp: e.target.userotp.value
+      })
+      .then((response) => {
+        console.log(response);
+        Cookies.remove('wsb_117_115_admin');
+        nav('/');
+      })
+      .catch((error)=>{
+        console.log(error)
+      })
+  }
+
   return (
     <div>
+      <div className="w-[100vw] h-[100vh] bg-[rgba(0,0,0,0.4)] fixed top-0 left-0 z-[99999]"
+      style={{
+        display: (loading) ? '' : 'none'
+      }}></div>
+       <ClipLoader
+        color={'#5351c9'}
+        loading={loading}
+        cssOverride={override}
+        size={150}
+        aria-label="Loading Spinner"
+        data-testid="loader"
+      />
       <div className="w-[90%] mx-auto mt-[140px] mb-[20px] bg-white border rounded-[10px]">
         <span className="block text-[#303640] bg-[#f8f8f9] rounded-[10px_10px_0_0] h-[60px] p-[15px_15px] box-border font-bold text-[25px] border-b">
           Profile
@@ -242,22 +314,24 @@ function Profile() {
           Update Email
         </span>
         <div className="w-full p-[30px]">
-          <form method="post">
+          <form method="post" onSubmit={handleUpdateEmail}>
             <div className="w-full mb-[10px]">
               <span className="block m-[15px_0]">Current Email</span>
               <input
                 type="email"
                 name="email"
+                value={adminData.email}
+                readOnly
                 className="w-full border h-[35px] rounded-[5px] p-2 input"
               />
             </div>
-            <div className="w-full mb-[10px]">
+            <div className={`w-full mb-[10px] ${(ifOtp) ? 'block' : 'hidden'} `}>
               <span className="block m-[15px_0]">OTP</span>
               <input
                 type="text"
                 placeholder="Enter OTP"
                 name='userotp'
-
+                
                 className="w-full border h-[35px] rounded-[5px] p-2 input"
               />
               <input
@@ -270,16 +344,17 @@ function Profile() {
             </div>
             <button
               type="button"
-
-              className={`w-[150px] h-[40px] rounded-md text-white  my-[30px]`}>
-              {'otpBtnText'}
+              onClick={handleGenrateOtp}
+              disabled={ifOtp}
+              className={`px-4 h-[40px] ${(ifOtp) ? 'bg-slate-500' : 'bg-[#5351c9]'} rounded-md text-white  my-[30px]`}>
+              {otpText}
             </button>
 
             <button
 
-              type="button"
+              type="submit"
 
-              className={`w-[150px] block h-[40px] rounded-md text-white bg-[#5351c9]  my-[30px]`}>
+              className={`px-3 h-[40px] rounded-md text-white bg-[#5351c9]  my-[30px] ${(ifOtp) ? 'block' : 'hidden'}`}>
               Update Email
             </button>
           </form>
