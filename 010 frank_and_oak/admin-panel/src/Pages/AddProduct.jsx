@@ -1,13 +1,108 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import Swal from "sweetalert2";
+import Select from 'react-select';
 
 const AddProduct = () => {
+  const [parentCategories, setParentCategories] = useState([]);
+  const [productCategory, setProductCategory] = useState([]);
+  const [sizes, setSizes] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const fetchCategory = () => {
+
+    axios.get(`${process.env.REACT_APP_API_HOST}/api/admin-panel/parent-category/active-categories`)
+      .then((response) => {
+        console.log(response.data);
+        setParentCategories(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  };
+
+  const fetchSizes = () => {
+    axios.get(`${process.env.REACT_APP_API_HOST}/api/admin-panel/size/active-sizes`)
+      .then((response) => {
+        console.log(response.data);
+
+        const newSizes = response.data.data.map((size)=> ({...size, value: size._id, label: size.name.captil}));
+        setSizes(newSizes);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
+  const fetchColors = () => {
+    axios.get(`${process.env.REACT_APP_API_HOST}/api/admin-panel/color/active-colors`)
+      .then((response) => {
+        console.log(response.data);
+
+        const newColors = response.data.data.map((color)=> ({...color, value: color._id, label: color.name.charAt(0).toUpperCase()}));
+        setColors(newColors);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+  }
+
+  useEffect(() => {
+    fetchCategory();
+    fetchSizes();
+    fetchColors()
+  }, []);
+
+  const handleFetchProductCategory = (e) => {
+    if (e.target.value === 'default') return;
+
+    axios.get(`${process.env.REACT_APP_API_HOST}/api/admin-panel/product-category/true-categories-by-parent/${e.target.value}`)
+      .then((response) => {
+        console.log(response.data);
+        setProductCategory(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+
+  };
+
+  const handleCreateProduct = (e) => {
+    e.preventDefault();
+
+    // console.log(e.target.sizes.value);
+
+
+    if (e.target.parent_category.value === 'default') {
+      Swal.fire({
+        title: "Parent Category?",
+        text: "Please select parent category!",
+        icon: "question"
+      });
+
+      return;
+    }
+
+
+    if (e.target.product_category.value === 'default') {
+      Swal.fire({
+        title: "Product Category?",
+        text: "Please select product category!",
+        icon: "question"
+      });
+
+      return;
+    }
+  }
+
   return (
     <div className="w-[90%] mx-auto my-[150px] bg-white rounded-[10px] border">
       <span className="block border-b bg-[#f8f8f9] text-[#303640] text-[20px] font-bold p-[8px_16px] h-[40px] rounded-[10px_10px_0_0]">
         Product Details
       </span>
       <div className="w-[90%] mx-auto my-[20px]">
-        <form>
+        <form onSubmit={handleCreateProduct} method='post'>
           <div className="w-full my-[10px]">
             <label htmlFor="product_name" className="block text-[#303640]">
               Product Name
@@ -116,16 +211,21 @@ const AddProduct = () => {
               id="parent_category"
               name="parent_category"
               className="w-full input border p-2 rounded-[5px] my-[10px] cursor-pointer"
+              onChange={handleFetchProductCategory}
             >
               <option value="default" selected disabled hidden>
                 --Select Parent Category--
               </option>
-              <option value="men" className="cursor-pointer">
-                Men
-              </option>
-              <option value="women" className="cursor-pointer">
-                Women
-              </option>
+
+              {
+                parentCategories.map((parentCategory) => (
+                  <option value={parentCategory._id} className="cursor-pointer">
+                    {parentCategory.name}
+                  </option>
+                ))
+              }
+
+
             </select>
           </div>
           <div className="w-full my-[10px]">
@@ -140,12 +240,13 @@ const AddProduct = () => {
               <option value="default" selected disabled hidden>
                 --Select Product Category--
               </option>
-              <option value="tShirt" className="cursor-pointer">
-                T-shirt
-              </option>
-              <option value="shirt" className="cursor-pointer">
-                Shirt
-              </option>
+              {
+                productCategory.map((category) => (
+                  <option value={category._id} className="cursor-pointer">
+                    {category.name}
+                  </option>
+                ))
+              }
             </select>
           </div>
           <div className="w-full grid grid-cols-[2fr_2fr] gap-[20px]">
@@ -180,13 +281,21 @@ const AddProduct = () => {
           </div>
           <div className="w-full grid grid-cols-[2fr_2fr] gap-[20px]">
             <div>
-              <label htmlFor="size" className="block text-[#303640]">
+              <label htmlFor="size" className="block text-[#303640] mb-3">
                 Size
               </label>
-              <select
+              <Select
+                name="sizes"
+                defaultValue={selectedOption}
+                onChange={setSelectedOption}
+                options={sizes}
+                isMulti
+              />
+              {/* <select
                 name="size"
                 id="size"
                 className="p-2 input w-full border rounded-[5px] my-[10px]"
+                multiple
               >
                 <option value="default" selected disabled hidden>
                   --Select Size--
@@ -196,13 +305,20 @@ const AddProduct = () => {
                 <option value="l">L</option>
                 <option value="xl">XL</option>
                 <option value="xxl">XXL</option>
-              </select>
+              </select> */}
             </div>
             <div>
-              <label htmlFor="color" className="block text-[#303640]">
+              <label htmlFor="color" className="block text-[#303640] mb-3">
                 Color
               </label>
-              <select
+              <Select
+                name="colors"
+                defaultValue={selectedOption}
+                onChange={setSelectedOption}
+                options={colors}
+                isMulti
+              />
+              {/* <select
                 name="color"
                 id="color"
                 className="p-2 input w-full border rounded-[5px] my-[10px]"
@@ -214,7 +330,7 @@ const AddProduct = () => {
                 <option value="orange">Orange</option>
                 <option value="yellow">Yellow</option>
                 <option value="white">White</option>
-              </select>
+              </select> */}
             </div>
           </div>
           <div className="w-full my-[10px] ">

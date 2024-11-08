@@ -16,7 +16,8 @@ const {
 
 //color controllers
 const {
-    createColor
+    createColor,
+    trueColors
 } = require("./admin-panel/colorControllers");
 
 // product category controllers 
@@ -33,6 +34,7 @@ const {
      genrateOtp,
      updateAdminEmail
     } = require("./admin-panel/adminControllers");
+const { activeSizes } = require("./admin-panel/sizeControllers");
 
 
 
@@ -55,5 +57,7 @@ module.exports = {
     adminLogin,
     updateAdmin,
     genrateOtp,
-    updateAdminEmail
+    updateAdminEmail,
+    activeSizes,
+    trueColors
 }
