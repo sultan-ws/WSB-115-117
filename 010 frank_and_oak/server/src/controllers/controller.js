@@ -34,7 +34,9 @@ const {
      genrateOtp,
      updateAdminEmail
     } = require("./admin-panel/adminControllers");
+
 const { activeSizes } = require("./admin-panel/sizeControllers");
+const { createProduct } = require("./admin-panel/productControllers");
 
 
 
@@ -59,5 +61,6 @@ module.exports = {
     genrateOtp,
     updateAdminEmail,
     activeSizes,
-    trueColors
+    trueColors,
+    createProduct
 }

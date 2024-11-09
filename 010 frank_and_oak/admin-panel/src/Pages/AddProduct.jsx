@@ -27,7 +27,7 @@ const AddProduct = () => {
       .then((response) => {
         console.log(response.data);
 
-        const newSizes = response.data.data.map((size)=> ({...size, value: size._id, label: size.name.captil}));
+        const newSizes = response.data.data.map((size)=> ({...size, value: size._id, label: size.name.toUpperCase()}));
         setSizes(newSizes);
       })
       .catch((error) => {
@@ -40,7 +40,7 @@ const AddProduct = () => {
       .then((response) => {
         console.log(response.data);
 
-        const newColors = response.data.data.map((color)=> ({...color, value: color._id, label: color.name.charAt(0).toUpperCase()}));
+        const newColors = response.data.data.map((color)=> ({...color, value: color._id, label: color.name}));
         setColors(newColors);
       })
       .catch((error) => {
@@ -71,9 +71,6 @@ const AddProduct = () => {
   const handleCreateProduct = (e) => {
     e.preventDefault();
 
-    // console.log(e.target.sizes.value);
-
-
     if (e.target.parent_category.value === 'default') {
       Swal.fire({
         title: "Parent Category?",
@@ -94,6 +91,14 @@ const AddProduct = () => {
 
       return;
     }
+
+    axios.post(`${process.env.REACT_APP_API_HOST}/api/admin-panel/products/add-product`, e.target)
+    .then((response)=>{
+      console.log(response.data);
+    })
+    .catch((error)=>{
+      console.log(error);
+    })
   }
 
   return (
@@ -110,7 +115,7 @@ const AddProduct = () => {
             <input
               type="text"
               id="product_name"
-              name="product_name"
+              name="name"
               placeholder="Name"
               className="w-full input border p-2 rounded-[5px] my-[10px]"
             />
@@ -121,7 +126,7 @@ const AddProduct = () => {
             </label>
             <textarea
               id="product_desc"
-              name="product_desc"
+              name="description"
               placeholder="Description"
               rows={3}
               cols={10}
@@ -137,7 +142,7 @@ const AddProduct = () => {
             </label>
             <textarea
               id="product_short_desc"
-              name="product_short_desc"
+              name="short_description"
               placeholder="Short Description"
               rows={2}
               cols={10}
@@ -151,7 +156,7 @@ const AddProduct = () => {
             <input
               type="file"
               id="product_img"
-              name="product_img"
+              name="thumbnail"
               className="w-full input border rounded-[5px] my-[10px] category"
             />
           </div>
@@ -162,7 +167,7 @@ const AddProduct = () => {
             <input
               type="file"
               id="image_animation"
-              name="image_animation"
+              name="animate_thumbnail"
               className="w-full input border rounded-[5px] my-[10px] category"
             />
           </div>
@@ -173,7 +178,8 @@ const AddProduct = () => {
             <input
               type="file"
               id="product_gallery"
-              name="product_gallery"
+              name="gallery"
+              multiple
               className="w-full input border rounded-[5px] my-[10px] category"
             />
           </div>
@@ -185,7 +191,7 @@ const AddProduct = () => {
               <input
                 type="text"
                 id="product_price"
-                name="product_price"
+                name="price"
                 placeholder="Product Price"
                 className="w-full input border rounded-[5px] my-[10px] p-2"
               />
@@ -197,7 +203,7 @@ const AddProduct = () => {
               <input
                 type="text"
                 id="product_mrp"
-                name="product_mrp"
+                name="mrp"
                 placeholder="Product MRP"
                 className="w-full input border rounded-[5px] my-[10px] p-2"
               />
@@ -262,8 +268,8 @@ const AddProduct = () => {
                 <option value="default" selected disabled hidden>
                   --Select Stock--
                 </option>
-                <option value="inStock">In Stock</option>
-                <option value="outStock">Out of Stock</option>
+                <option value={true}>In Stock</option>
+                <option value={false}>Out of Stock</option>
               </select>
             </div>
             <div>
@@ -341,7 +347,7 @@ const AddProduct = () => {
               type="radio"
               name="status"
               id="status"
-              value="0"
+              value={true}
               className="my-[10px] mx-[20px] accent-[#5351c9]"
             />
             <span>Display</span>
@@ -349,7 +355,7 @@ const AddProduct = () => {
               type="radio"
               name="status"
               id="status"
-              value="1"
+              value={false}
               className="my-[10px] mx-[20px] accent-[#5351c9]"
               checked
             />
