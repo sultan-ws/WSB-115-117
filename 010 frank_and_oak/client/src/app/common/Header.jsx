@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { RxHamburgerMenu } from "react-icons/rx";
 import { CiSearch } from "react-icons/ci";
 import { FaRegUserCircle } from "react-icons/fa";
@@ -11,11 +11,30 @@ import MobileSideBar from '../modals/MobileSideBar';
 import Link from 'next/link';
 import { MenMegaMenu, OurStoryMegaMenu, ThisJustInMegaMenu, WomenMegaMenu } from './MegaMenu';
 import TextSlider from './TextSlider';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchParentCategories } from '../redux/slices/parentCategorySlice';
+import { useRouter } from 'next/navigation';
+
 export default function Header() {
+  const route = useRouter();
   let [loginStatus,setLoginStatus]=useState(false)
   let [cartStatus,setCartStatus]=useState(false)
   let [menuHover,setMenuHover]=useState(0)
-  let [sidebarStatus,setSidebarStatus]=useState(false)
+  let [sidebarStatus,setSidebarStatus]=useState(false);
+
+  const dispatch = useDispatch();
+
+  useEffect(()=>{
+    dispatch(fetchParentCategories());
+  },[dispatch]);
+
+  const categories = useSelector((state)=> state.parentCategories.value);
+
+  const handleCategoryData = (categoryName)=>{
+    route.push(`/collections/${categoryName}`);
+  };
+
   
   return (
     <div className='fixed top-0 z-[999999] w-full'>
@@ -29,15 +48,20 @@ export default function Header() {
       <nav className=' basis-[30%] lg:basis-[84%] md:basis-[75%]  flex items-center justify-end lg:justify-between'>
         <div className='lg:block  hidden'>
           <ul className='flex gap-6 text-[15px] font-medium'>
-            <li onMouseOver={()=>setMenuHover(1)} onMouseOut={()=>setMenuHover(0)} className='hover:bg-[#F9F9F9] cursor-pointer hover:underline underline-offset-4 px-3 duration-500 p-2'>This Just In
-            <ThisJustInMegaMenu menuHover={menuHover} setMenuHover={setMenuHover} />
-            </li>
-            <li onMouseOver={()=>setMenuHover(2)} onMouseOut={()=>setMenuHover(0)} className='hover:bg-[#F9F9F9] cursor-pointer hover:underline underline-offset-4 px-3 duration-500 p-2'>Women
+            {
+              categories.map((category, index)=>(
+                <li key={index} onClick={()=>{handleCategoryData(category.name)}} onMouseOver={()=>setMenuHover(1)} onMouseOut={()=>setMenuHover(0)} className='hover:bg-[#F9F9F9] cursor-pointer hover:underline underline-offset-4 px-3 duration-500 p-2'>{category.name}
+                <ThisJustInMegaMenu menuHover={menuHover} setMenuHover={setMenuHover} />
+                </li>
+              ))
+            }
+          
+            {/* <li onMouseOver={()=>setMenuHover(2)} onMouseOut={()=>setMenuHover(0)} className='hover:bg-[#F9F9F9] cursor-pointer hover:underline underline-offset-4 px-3 duration-500 p-2'>Women
             <WomenMegaMenu menuHover={menuHover} setMenuHover={setMenuHover} />
             </li>
             <li onMouseOver={()=>setMenuHover(3)} onMouseOut={()=>setMenuHover(0)} className='hover:bg-[#F9F9F9] cursor-pointer hover:underline underline-offset-4 px-3 duration-500 p-2'>Men
             <MenMegaMenu menuHover={menuHover} setMenuHover={setMenuHover} />
-            </li>
+            </li> */}
             <li onMouseOver={()=>setMenuHover(4)} onMouseOut={()=>setMenuHover(0)} className='hover:bg-[#F9F9F9] cursor-pointer hover:underline underline-offset-4 px-3 duration-500 p-2'>Our Story
             <OurStoryMegaMenu menuHover={menuHover} setMenuHover={setMenuHover} />
             </li>

@@ -38,6 +38,14 @@ const {
 const { activeSizes } = require("./admin-panel/sizeControllers");
 const { createProduct } = require("./admin-panel/productControllers");
 
+//website controllres
+
+//parent category
+const { 
+    activeParentCategoriesWeb
+ } = require("./website/parentCategoryConyrollers");
+const { readProductsByParentCategoryWeb } = require("./website/productControllers");
+
 
 
 
@@ -62,5 +70,7 @@ module.exports = {
     updateAdminEmail,
     activeSizes,
     trueColors,
-    createProduct
+    createProduct,
+    activeParentCategoriesWeb,
+    readProductsByParentCategoryWeb
 }
