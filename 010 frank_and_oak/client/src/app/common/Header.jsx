@@ -31,6 +31,8 @@ export default function Header() {
 
   const categories = useSelector((state)=> state.parentCategories.value);
 
+  console.log('categories', categories)
+
   const handleCategoryData = (categoryName)=>{
     route.push(`/collections/${categoryName}`);
   };
@@ -50,8 +52,8 @@ export default function Header() {
           <ul className='flex gap-6 text-[15px] font-medium'>
             {
               categories.map((category, index)=>(
-                <li key={index} onClick={()=>{handleCategoryData(category.name)}} onMouseOver={()=>setMenuHover(1)} onMouseOut={()=>setMenuHover(0)} className='hover:bg-[#F9F9F9] cursor-pointer hover:underline underline-offset-4 px-3 duration-500 p-2'>{category.name}
-                <ThisJustInMegaMenu menuHover={menuHover} setMenuHover={setMenuHover} />
+                <li key={index} onClick={()=>{handleCategoryData(category.name)}} onMouseOver={()=>setMenuHover(1)} onMouseOut={()=>setMenuHover(0)} className=' cursor-pointer hover:underline underline-offset-4 px-3 duration-500 p-2'>{category.name}
+                <ThisJustInMegaMenu subCategories={category.subCategories} menuHover={menuHover} setMenuHover={setMenuHover} />
                 </li>
               ))
             }

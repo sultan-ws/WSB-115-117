@@ -1,4 +1,5 @@
 const ParentCategory = require("../../models/parentCategory");
+const Product = require("../../models/product");
 
 const createParentCategory = async (req, res)=>{
     try{
@@ -147,6 +148,20 @@ const activeParentCategories = async (req, res) => {
     try{
         const response = await ParentCategory.find({deleted_at: null, status: true});
         res.status(200).json({message: 'success', data: response});
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message: 'internal server error'});
+    }
+}
+
+const deleteParentcategoryPermanent = async (req, res) =>{
+    try{
+        const data = await ParentCategory.deleteOne(req.params);
+        await ProductCatgory.deleteMany({parent_category:req.params._id});
+        await Product.deleteMany({parent_category:req.params._id});
+
+        res.status(200).json({message:'success', data})
     }
     catch(error){
         console.log(error);

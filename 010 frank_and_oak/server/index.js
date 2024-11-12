@@ -6,6 +6,8 @@ const cors = require('cors');
 
 const app = express();
 
+app.use('/frank-and-oak-files/products/', express.static('./src/uploads/products'));
+
 
 app.use(cors());
 app.use(express.json());

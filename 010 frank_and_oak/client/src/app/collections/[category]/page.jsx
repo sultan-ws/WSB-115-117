@@ -12,6 +12,8 @@ export default function Category() {
   let [settingGrid,setSettingGrid]=useState(false);
   const {category} = useParams();
   const dispatch = useDispatch();
+  const [productsData, setProductsData] = useState([]);
+  const [filePath, setFilepath] = useState('');
 
   
   
@@ -23,6 +25,13 @@ export default function Category() {
    if(selectedcategory.length === 0) return;
    dispatch(fetchProductsByParentCategory(selectedcategory[0]._id));
   },[ categories]);
+
+  useEffect(()=>{
+    if(products.data) setProductsData(products.data);
+    
+    setFilepath(products.filepath);
+    console.log('products ====>',products);
+  },[products]);
 
   return (
     <>
@@ -41,30 +50,12 @@ export default function Category() {
             <div className='py-6'>
             <div className='text-[20px] pb-5 font-medium'>New In</div>
             <div className={`grid ${settingGrid ? "lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-3" : "lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-5" } duration-300`}>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
-                <Card/>
+               
+               {
+                productsData.map((product, index)=>(
+                  <Card key={index} product={product} filePath={filePath}/>
+                ))
+               }
             </div>
             <div className='text-center mt-10'>
                 <span className='text-[14px] font-mediumtext-[#666] block'>40 of 99</span>
