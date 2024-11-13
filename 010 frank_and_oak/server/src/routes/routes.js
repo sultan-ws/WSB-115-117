@@ -7,6 +7,8 @@ const sizeRouter = require('./admin-panel/size');
 const productRouter = require('./admin-panel/productRoutes');
 const { parentCategoryRouterWeb } = require('./website/parentCategoryRoutes');
 const productRouterWeb = require('./website/productRoutes');
+const cartRouter = require('./website/cartRoutes');
+const userRouter = require('./website/userRoutes');
 
 const adminPanelRouter = express.Router();
 const websiteRouter = express.Router();
@@ -22,6 +24,8 @@ adminPanelRouter.use('/products', productRouter);
 
 websiteRouter.use('/parent-category', parentCategoryRouterWeb);
 websiteRouter.use('/products', productRouterWeb);
+websiteRouter.use('/cart', cartRouter);
+websiteRouter.use('/user', userRouter);
 
 module.exports = {
     adminPanelRouter,

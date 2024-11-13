@@ -22,6 +22,7 @@
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.3.0",
     "frank_and_oak": "file:",
+    "js-cookie": "^3.0.5",
     "lucide-react": "^0.446.0",
     "next": "^14.2.13",
     "react": "^18",

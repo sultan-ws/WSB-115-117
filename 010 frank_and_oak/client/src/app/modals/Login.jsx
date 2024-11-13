@@ -4,6 +4,9 @@ import { FaFacebookF } from "react-icons/fa";
 import { FaGoogle } from "react-icons/fa";
 import { BsArrowRight } from "react-icons/bs";
 import { useState } from "react";
+import axios from "axios";
+import Cookies from "js-cookie";
+
 export default function Login({loginStatus,setLoginStatus}) {
   let [compStatus,setCompStatus]=useState(true)
   
@@ -73,6 +76,30 @@ function LoginBox() {
 
 
 function SignUpBox({setCompStatus,compStatus}) {
+  const [data, setData] = useState({});
+
+  const genrateOtp = ()=>{
+    axios.post('http://localhost:4800/api/website/user/genrate-otp', {email: data.email})
+    .then((response)=>{
+      console.log(response.data);
+    })
+    .catch((error)=>{
+      console.log(error);
+    })
+  };
+
+  const registerUser = ()=>{ 
+    axios.post('http://localhost:4800/api/website/user/register-user', data)
+    .then((response)=>{
+      console.log(response.data);
+
+      Cookies.set('frank_user_115', JSON.stringify(response.data.data));
+    })
+    .catch((error)=>{
+      console.log(error);
+    })
+  }
+
   return (
     <div className="flex flex-col gap-3 py-6">
        <div className="pt-3 text-[14px] text-center font-semibold">
@@ -80,21 +107,23 @@ function SignUpBox({setCompStatus,compStatus}) {
        </div>
        <div className="py-5 border-t border-gray-300"> 
         <div className="grid grid-cols-2 gap-5 mb-3">
-        <input className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " type="text" placeholder="First Name" />
-        <input className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " type="text" placeholder="Last Name" />
+        <input name="firstname" onChange={(e)=>{setData({...data, firstname: e.target.value})}} className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " type="text" placeholder="First Name" />
+        <input  name="lastname" onChange={(e)=>{setData({...data, lastname: e.target.value})}} className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " type="text" placeholder="Last Name" />
         </div>
         <div className="flex flex-col gap-3">
-    <input className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " type="text" placeholder="Email Address" />
-    <input className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " type="tel" placeholder="Password" />
-    <div className="text-[14px] flex gap-5 font-medium">I shop for 
+    <input  name="email" onChange={(e)=>{setData({...data, email: e.target.value})}} className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " type="text" placeholder="Email Address" />
+    <input  name="password" onChange={(e)=>{setData({...data, password: e.target.value})}} className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " type="tel" placeholder="Password" />
+    <input  name="otp" onChange={(e)=>{setData({...data, otp: e.target.value})}} className="p-3 border text-[#757575] text-[14px] font-semibold border-[#757575] " type="text" placeholder="OTP" />
+    
+    {/* <div className="text-[14px] flex gap-5 font-medium">I shop for 
       <div className="flex items-center gap-3">
       <input type="radio" name="radio" id="" /> Men
       <input type="radio" name="radio" id="" /> Women
       <input type="radio" name="radio" id="" /> All
     </div>
-     </div>
+     </div> */}
      <div>
-     <div class="flex gap-2 pt-3">
+     {/* <div class="flex gap-2 pt-3">
                     <input
                         id="red-checkbox"
                         type="checkbox"
@@ -104,8 +133,9 @@ function SignUpBox({setCompStatus,compStatus}) {
                     <label className="text-[14px] font-semibold">
                         Yes, sign me up to the Frank And Oak newsletter to never miss out on product launches and exclusive promotions.
                     </label>
-      </div>
-      <button className="p-3.5 mt-4 w-full bg-black text-white font-semibold">Sign Up</button>
+      </div> */}
+      <button type="button" onClick={genrateOtp} className="p-3.5 mt-4 w-full bg-black text-white font-semibold">Genrate OTP</button>
+      <button type="button" onClick={registerUser} className="p-3.5 mt-4 w-full bg-black text-white font-semibold">Sign Up</button>
      </div>
         </div>
        </div>

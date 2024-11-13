@@ -2,14 +2,31 @@
 
 import { useState } from "react"
 import { QuickAddButton } from "../HomeComponents/ThisJustIn"
+import Cookies from "js-cookie";
 
 export function Card({product, filePath}) {
-    let [quickAdd,setQuickAdd]=useState(false)
+    let [quickAdd,setQuickAdd]=useState(false);
+
+    const handleAddToCart = (e)=>{
+      const cookiedata = Cookies.get('frank_user_115');
+
+      if(!cookiedata) return alert('Please login');
+      
+      const userData = JSON.parse(cookiedata);
+
+      const data = {
+        size: e.target.value,
+        product: product._id,
+        user: userData._id
+      }
+
+      console.log(data);
+    };
   return (
     <div className='cursor-pointer group'>
                 <div className=' w-full h-full'>
                     <div className='group relative'>
-                    <span className='bg-black text-white absolute right-2 top-2 z-[9999] text-[8px] sm:text-[10px] font-medium uppercase px-0.5 sm:px-1 py-0.5'>{((( product.mrp - product.price) * 100) / product.mrp).toFixed(2)}%</span>
+                    <span className='bg-black text-white absolute right-2 top-2 z-[9999] text-[8px] sm:text-[10px] font-medium uppercase px-0.5 sm:px-1 py-0.5'>{((( product.mrp - product.price) * 100) / product.mrp).toFixed(2)}% Off</span>
                     <img className='h-full w-full object-cover' src={filePath + product.thumbnail} alt="Womens Denim" />
                     <img className='h-full w-full duration-300 z-[999] absolute top-0 group-hover:block hidden object-cover' 
                     src={filePath + product.animate_thumbnail}
@@ -18,7 +35,7 @@ export function Card({product, filePath}) {
                     <div className="z-[99999] w-full h-full p-2 bg-black bottom-0 left-0 absolute group-hover:grid grid-cols-5 gap-2 hidden">
                       {
                         product.sizes.map((size, index)=>(
-                          <button key={index} className="bg-white uppercase">
+                          <button value={size._id} onClick={handleAddToCart} key={index} className="bg-white uppercase">
                             {size.name}
                           </button>
                         ))
