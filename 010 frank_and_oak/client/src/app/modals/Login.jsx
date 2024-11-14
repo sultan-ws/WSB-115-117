@@ -81,7 +81,6 @@ function SignUpBox({setCompStatus,compStatus}) {
   const genrateOtp = ()=>{
     axios.post('http://localhost:4800/api/website/user/genrate-otp', {email: data.email})
     .then((response)=>{
-      console.log(response.data);
     })
     .catch((error)=>{
       console.log(error);
@@ -91,7 +90,6 @@ function SignUpBox({setCompStatus,compStatus}) {
   const registerUser = ()=>{ 
     axios.post('http://localhost:4800/api/website/user/register-user', data)
     .then((response)=>{
-      console.log(response.data);
 
       Cookies.set('frank_user_115', JSON.stringify(response.data.data));
     })

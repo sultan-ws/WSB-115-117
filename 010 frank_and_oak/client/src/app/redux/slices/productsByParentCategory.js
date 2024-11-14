@@ -18,7 +18,7 @@ export const fetchProductsByParentCategory = createAsyncThunk(
 );
 
 const initialState = {
-    value: {name:'purnesh'},
+    value: {},
     loading: false,
     error: null
 };
@@ -35,12 +35,10 @@ export const productByParentCategorySlice = createSlice({
         .addCase(fetchProductsByParentCategory.pending, (state, action)=>{
             state.loading = true;
             state.error = null;
-            console.log('pending');
         })
         .addCase(fetchProductsByParentCategory.fulfilled, (state, action)=>{
             state.value = action.payload;
             state.loading = false;
-            console.log(action.payload);
         })
         .addCase(fetchProductsByParentCategory.rejected, (state, action)=>{
             state.error = action.payload;

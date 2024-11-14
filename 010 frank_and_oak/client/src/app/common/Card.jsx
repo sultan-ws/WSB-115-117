@@ -1,11 +1,20 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { QuickAddButton } from "../HomeComponents/ThisJustIn"
 import Cookies from "js-cookie";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../redux/slices/cartSlice";
 
 export function Card({product, filePath}) {
     let [quickAdd,setQuickAdd]=useState(false);
+    const [selectedColor, setSelectedColor] = useState(null);
+
+    const dispatch = useDispatch();
+
+    useEffect(()=>{
+      setSelectedColor(product.colors[0]._id);
+    },[product]);
 
     const handleAddToCart = (e)=>{
       const cookiedata = Cookies.get('frank_user_115');
@@ -17,10 +26,11 @@ export function Card({product, filePath}) {
       const data = {
         size: e.target.value,
         product: product._id,
-        user: userData._id
+        user: userData._id,
+        color: selectedColor
       }
 
-      console.log(data);
+      dispatch(addToCart(data));
     };
   return (
     <div className='cursor-pointer group'>
@@ -32,7 +42,7 @@ export function Card({product, filePath}) {
                     src={filePath + product.animate_thumbnail}
                      alt="Womens Denim" />
                     <button onClick={()=>setQuickAdd(true)} className={`${setQuickAdd ? <QuickAddButton/> : ""}  group w-[95%] text-center box-border bg-white py-3 text-[14px] font-medium z-[9999] absolute bottom-2 translate-x-[-50%] left-[50%]  group-hover:block hidden`}>Quick Add
-                    <div className="z-[99999] w-full h-full p-2 bg-black bottom-0 left-0 absolute group-hover:grid grid-cols-5 gap-2 hidden">
+                    <div className="z-[99999] w-full p-2 bg-black bottom-0 left-0 absolute group-hover:grid grid-cols-5 gap-2 hidden">
                       {
                         product.sizes.map((size, index)=>(
                           <button value={size._id} onClick={handleAddToCart} key={index} className="bg-white uppercase">
@@ -53,16 +63,20 @@ export function Card({product, filePath}) {
                   <span className="line-through text-gray-500 ms-3">₹ {product.mrp}</span>
                 </div>
                 <span className='group-hover:hidden sm:text-[16px] text-[12px] block'>{product.colors.length} colors</span>
-                <div className='group-hover:block hidden mt-1'>
-                <div className='sm:w-5 sm:h-5 h-3 w-3 rounded-full border border-black flex items-center justify-center'>
+                <div className='group-hover:grid grid-cols-10 gap-1 hidden mt-1 '>
+                
                   {
                     product.colors.map((color, index)=>(
-                      <div key={index} className="w-[10px] h-[10px] rounded-full" style={{
+                      <div key={index} 
+                      onClick={()=>{setSelectedColor(color._id)}}
+                      className= {`${(selectedColor == color._id) ? 'shadow-[0px_0px_1px_4px_black]' : ''}  sm:w-5 sm:h-5 h-3 w-3 rounded-full border border-black flex items-center justify-center`}
+                      style={{
                         backgroundColor:color.code
-                      }}></div>
+                      }}
+                      ></div>
                     ))
                   }
-                </div>
+                
                 </div>
                 </div>
             </div>

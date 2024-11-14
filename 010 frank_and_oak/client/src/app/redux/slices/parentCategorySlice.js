@@ -36,12 +36,10 @@ export const parentCategorySlice = createSlice({
         .addCase(fetchParentCategories.pending, (state, action)=>{
             state.loading = true;
             state.error = null;
-            console.log('pending');
         })
         .addCase(fetchParentCategories.fulfilled, (state, action)=>{
             state.value = action.payload;
             state.loading = false;
-            console.log(action.payload);
         })
         .addCase(fetchParentCategories.rejected, (state, action)=>{
             state.error = action.payload;

@@ -5,7 +5,21 @@ export const addToCart = createAsyncThunk(
     "cart/addToCart",
     async(data, thunkApi)=>{
         try{
-            const response = axios.post('http://localhost:4800/api/website/cart/create-cart', data);
+            const response =await axios.post('http://localhost:4800/api/website/cart/create-cart', data);
+            return response.data;
+        }
+        catch(error){
+            console.log(error);
+        }
+    }
+);
+
+
+export const fetchCart = createAsyncThunk(
+    "cart/fetchCart",
+    async(id, thunkApi)=>{
+        try{
+            const response =await axios.get(`http://localhost:4800/api/website/cart/read-cart/${id}`);
             return response.data
         }
         catch(error){
@@ -29,6 +43,9 @@ export const cartSlice = createSlice({
         .addCase(addToCart.fulfilled, (state, action)=>{
             console.log(action.payload);
             // state.value = action.payload;
+        })
+        .addCase(fetchCart.fulfilled, (state, action)=>{
+            state.value = action.payload;
         })
     }
 });

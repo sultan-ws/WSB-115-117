@@ -45,7 +45,7 @@ const {
     activeParentCategoriesWeb
  } = require("./website/parentCategoryConyrollers");
 const { readProductsByParentCategoryWeb } = require("./website/productControllers");
-const { createCart } = require("./website/cartControllers");
+const { createCart, readCart } = require("./website/cartControllers");
 const { genrateOtpWeb, registerUser } = require("./website/userControllers");
 
 
@@ -77,5 +77,6 @@ module.exports = {
     readProductsByParentCategoryWeb,
     createCart,
     genrateOtpWeb,
-    registerUser
+    registerUser,
+    readCart
 }
