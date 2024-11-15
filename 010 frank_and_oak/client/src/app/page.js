@@ -15,7 +15,7 @@ export default function Home() {
     {/* <TextSlider/> */}
     <Banner/>
     <FeaturedCategories/>
-    <ThisJustIn/>
+    {/* <ThisJustIn/> */}
     <ProductReview/>
     <BetterLiving/>
     </>

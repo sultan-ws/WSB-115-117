@@ -50,9 +50,42 @@ const readCart = async (req, res) => {
         console.error(error);
         res.status(500).json({message: 'internal server error'});
     }
+};
+
+const updateCart = async (req, res) => {
+    try{
+        const data = await Cart.updateOne(
+            req.params,
+            {
+                $set:{
+                    quantity : req.body.quantity
+                }
+            }
+        );
+
+        res.status(200).json({message:'success'});
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).json({message: 'internal server error'});
+    }
+}
+
+const deleteCart = async (req, res) => {
+    try{
+        const data = await Cart.deleteOne(req.params);
+
+        res.status(200).json({message:'success'});
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).json({message: 'internal server error'});
+    }
 }
 
 module.exports = {
     createCart,
-    readCart
+    readCart,
+    updateCart,
+    deleteCart
 }

@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const User = require('../../models/user');
+const jwt = require('jsonwebtoken');
 
 const otpStore = new Map();
 
@@ -61,11 +62,34 @@ const registerUser = async (req, res) => {
 
        const data = await dataToSave.save();
 
-        res.status(200).json({message: 'success', data});
+       jwt.sign(data._doc, process.env.JWT_KEY, { expiresIn: '10d' }, (error, token)=>{
+        if(error) return res.status(500).json({message: 'internal server error'});
+
+        res.status(200).json({message: 'success', data, token});
+       });
+
+       
     }
     catch(error){
         console.log(error);
         res.status(500).json({messsage: 'internal server error'});
+    }
+};
+
+const verifyJwt = async (req, res) => {
+    try{
+        const token = req.headers.authorization;
+
+        if(!token) return  res.status(400).json({messsage: 'please send a token'});
+
+        jwt.verify(token,  process.env.JWT_KEY, (error, decode)=>{
+            if(error) return res.status(400).json({message: 'invalid token'});
+            res.status(200).json({message: 'success', data: decode});
+        });
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message: 'internal server error'});
     }
 }
 

@@ -243,7 +243,7 @@ export default function Checkout() {
                   </label>
                 </div>
             </div>
-            <div className="space-y-4 py-5">
+            {/* <div className="space-y-4 py-5">
             <h4 className="font-semibold">Shipping method</h4>
             <div className="bg-[#F5F5F5] text-sm font-normal text-[#707070] p-5">Enter your shipping address to view available shipping methods.</div>
             <div className="flex justify-between">
@@ -259,7 +259,7 @@ export default function Checkout() {
             </div>
             <div className="text-sm font-normal">$8.55</div>
             </div>
-            </div>
+            </div> */}
             <div className="space-y-4 py-5">
             <h4 className="font-semibold">Remember me</h4>
             <div>
