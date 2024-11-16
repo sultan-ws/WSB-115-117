@@ -63,10 +63,6 @@ export default function Header() {
 
   const categories = useSelector((state) => state.parentCategories.value);
 
-  const handleCategoryData = (categoryName) => {
-    route.push(`/collections/${categoryName}`);
-  };
-
   const closeCart = ()=>{
     setCartStatus(false);
    
@@ -93,7 +89,8 @@ export default function Header() {
             <ul className='flex gap-6 text-[15px] font-medium'>
               {
                 categories.map((category, index) => (
-                  <li key={index} onClick={() => { handleCategoryData(category.name) }} onMouseOver={() => setMenuHover(index)} onMouseOut={() => setMenuHover(null)} className=' cursor-pointer hover:underline underline-offset-4 px-3 duration-500 p-2'>{category.name}
+                  <li key={index} onMouseOver={() => setMenuHover(index)} onMouseOut={() => setMenuHover(null)} className=' cursor-pointer hover:underline underline-offset-4 px-3 duration-500 p-2'>
+                    <Link href={`/collections/${category.name}`}>{category.name}</Link>
                   {
                     menuHover === index && (
                       <ThisJustInMegaMenu subCategories={category.subCategories} menuHover={menuHover} setMenuHover={setMenuHover} />
@@ -103,13 +100,6 @@ export default function Header() {
                   </li>
                 ))
               }
-
-              {/* <li onMouseOver={()=>setMenuHover(2)} onMouseOut={()=>setMenuHover(0)} className='hover:bg-[#F9F9F9] cursor-pointer hover:underline underline-offset-4 px-3 duration-500 p-2'>Women
-            <WomenMegaMenu menuHover={menuHover} setMenuHover={setMenuHover} />
-            </li>
-            <li onMouseOver={()=>setMenuHover(3)} onMouseOut={()=>setMenuHover(0)} className='hover:bg-[#F9F9F9] cursor-pointer hover:underline underline-offset-4 px-3 duration-500 p-2'>Men
-            <MenMegaMenu menuHover={menuHover} setMenuHover={setMenuHover} />
-            </li> */}
               <li onMouseOver={() => setMenuHover(4)} onMouseOut={() => setMenuHover(0)} className='hover:bg-[#F9F9F9] cursor-pointer hover:underline underline-offset-4 px-3 duration-500 p-2'>Our Story
                 <OurStoryMegaMenu menuHover={menuHover} setMenuHover={setMenuHover} />
               </li>

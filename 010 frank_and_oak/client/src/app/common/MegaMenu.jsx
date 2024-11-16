@@ -4,11 +4,12 @@ import React from "react";
 
 export function ThisJustInMegaMenu({ menuHover, setMenuHover, subCategories }) {
   const route = useRouter();
-  const handleToSubCategory = (slug)=>{
+  // const handleToSubCategory = (slug)=>{
 
-    console.log(slug);
-    route.push(`/collections/category/${slug}`);
-  }
+  //   console.log(slug);
+  //   route.push(`/collections/category/${slug}`);
+  // }
+
   return (
     <div onMouseOver={() => setMenuHover(1)} onMouseOut={() => setMenuHover(0)} className={`${menuHover != null ? "opacity-100 visible" : "opacity-0 invisible"} duration-500 w-full bg-[#F9F9F9] absolute left-0 top-[100%]`}>
       <div className="grid grid-cols-[28%_auto] gap-24 p-10">
@@ -16,9 +17,9 @@ export function ThisJustInMegaMenu({ menuHover, setMenuHover, subCategories }) {
           <ul className="space-y-2">
             {
               subCategories.map((category, index) => (
-
-                  <li key={index} onClick={()=>{handleToSubCategory(category.slug)}} className="text-[13px] font-semibold cursor-pointer hover:underline capitalize">
-                    {category.name}
+              
+                  <li key={index} onClick={()=>(console.log(category.slug))} className="text-[13px] font-semibold cursor-pointer hover:underline capitalize">
+                      <Link href={`/collections/category/${category.slug}`}>{category.name}</Link>
                   </li>
               ))
             }

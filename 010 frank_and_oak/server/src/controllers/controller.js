@@ -47,6 +47,7 @@ const {
 const { readProductsByParentCategoryWeb } = require("./website/productControllers");
 const { createCart, readCart, updateCart, deleteCart } = require("./website/cartControllers");
 const { genrateOtpWeb, registerUser } = require("./website/userControllers");
+const { createCheckout } = require("./website/paymentControllers");
 
 
 
@@ -80,5 +81,6 @@ module.exports = {
     registerUser,
     readCart,
     updateCart,
-    deleteCart
+    deleteCart,
+    createCheckout
 }
