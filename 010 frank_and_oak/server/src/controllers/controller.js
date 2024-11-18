@@ -11,7 +11,8 @@ const {
     updateParentCategory,
     deletedParentCategory,
     restoreParentCategory,
-    activeParentCategories
+    activeParentCategories,
+    serachParentCategory
 } = require("./admin-panel/parentCategoryControllers");
 
 //color controllers
@@ -82,5 +83,6 @@ module.exports = {
     readCart,
     updateCart,
     deleteCart,
-    createCheckout
+    createCheckout,
+    serachParentCategory
 }

@@ -167,7 +167,21 @@ const deleteParentcategoryPermanent = async (req, res) =>{
         console.log(error);
         res.status(500).json({message: 'internal server error'});
     }
-}
+};
+
+const serachParentCategory = async (req, res)=>{
+    try{
+        const data = await ParentCategory.find({deleted_at:null, $or:[
+            { name:{$regex: new RegExp(req.params.query), $options:'i'}},
+            { description:{$regex: new RegExp(req.params.query), $options:'i'}}
+        ]});
+        res.status(200).json({message: 'success', data});
+    }
+    catch(error){
+        console.log(error);
+        res.status(500).json({message: 'internal server error'});
+    }
+};
 
 module.exports = {
     createParentCategory,
@@ -179,5 +193,6 @@ module.exports = {
     updateParentCategory,
     deletedParentCategory,
     restoreParentCategory,
-    activeParentCategories
+    activeParentCategories,
+    serachParentCategory
 }

@@ -180,6 +180,20 @@ const ViewCategory = () => {
      .catch((error)=>{
       console.log(error);
       });
+  };
+  
+  const handleSearch = (e)=>{
+
+    if(e.target.value === '') return fetchCategory();
+
+    axios.get(`${process.env.REACT_APP_API_HOST}/api/admin-panel/parent-category/search-category/${e.target.value}`)
+    .then((response) => {
+      console.log(response.data);
+      setCategories(response.data.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    })
   }
 
   return (
@@ -187,6 +201,7 @@ const ViewCategory = () => {
       <Tooltip id="my-tooltip" />
       <div className="flex justify-between h-[40px] bg-[#f8f8f9] text-[20px] text-[#303640] p-[8px_16px] border-b rounded-[10px_10px_0_0]">
       <h4>View Category</h4>
+      <input type="text" onChange={handleSearch} className="p-4 w-[600px] border rounded-sm" />
         <span>
           <ImBin className="cursor-pointer" onClick={()=>{setOpen(true)}} />
         </span>
